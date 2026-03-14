@@ -93,9 +93,10 @@ frontend/app/
 
 ### 3.2 Route Groups
 
+**Note:** Authentication (login, signup, session, password reset) is handled entirely by **Supabase Auth on the frontend** via `@supabase/ssr`. The backend has no `/api/auth/*` routes — it only validates Supabase JWTs via `authMiddleware` on protected routes.
+
 | Group | Base Path | Purpose |
 |---|---|---|
-| Auth | `/api/auth/*` | Login, signup, session refresh, profile |
 | Properties | `/api/properties/*` | CRUD for property records |
 | ROI | `/api/roi/*` | ROI calculations, benchmarks |
 | Market | `/api/market/*` | Prop Pulse data, area stats, trends |

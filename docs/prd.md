@@ -113,41 +113,70 @@ All four layers share a unified session/state system so that data from the tools
 | End-to-End Investor Flow | |
 |---|---|
 | **Step 1** | User lands on the main web app via SEO, paid ad, or broker referral link. |
-| **Step 2** | User reads about the platform and is presented with two entry points: ROI Wizard and Prop Pulse. |
-| **Step 3a** | User selects ROI Wizard → enters property address/link, purchase price, expected rent, expenses. |
+| **Step 2** | User browses the landing page (guest access). Presented with three entry points: ROI Wizard, Prop Pulse, and Developer Intelligence. |
+| **Step 3a — ROI Path** | User selects ROI Wizard → enters property address/link, purchase price, expected rent, expenses. |
 | **Step 3b** | ROI Wizard displays gross yield, net yield, IRR, 5-year cashflow projection, and comparison to Dubai area average. |
-| **Step 4** | ROI Wizard surfaces CTA: 'View this property in 3D — See exactly what your investment looks like.' |
-| **Step 5** | User clicks CTA → 3D Viewer loads with the property's Gaussian Splat scene. |
-| **Step 6** | User navigates the 3D space, reads spatial ROI annotations anchored to room features. |
-| **Step 7** | User downloads or shares a cinematic WhatsApp-ready video tour. |
-| **Step 8** | User saves/bookmarks property or shares the full report link with a co-investor. |
+| **Step 3c** | User clicks "Generate Investment Summary" → Gemini AI produces a plain-language narrative contextualising the numbers. |
+| **Step 4a — Developer Intel Path** | User wants to vet the developer before committing. Opens Prop Pulse → Developer Intelligence. |
+| **Step 4b** | User enters developer name (e.g. "Sobha Realty") → Crustdata fetches B2B data → Gemini generates institutional-grade due diligence report with health score and recommendation. |
+| **Step 5** | User is prompted to sign up / log in (via Supabase Auth) to save the report and unlock full features. |
+| **Step 6** | ROI Wizard surfaces CTA: "View this property in 3D — See exactly what your investment looks like." |
+| **Step 7** | If a 3D scan exists: user navigates the 3D space, reads spatial ROI annotations. If not: user sees property images and is told a 3D tour can be requested from the listing broker. |
+| **Step 8** | User downloads or shares the cinematic WhatsApp-ready video tour (if available). |
+| **Step 9** | User saves/bookmarks property, shares the full report link (ROI + developer intel + 3D tour) with a co-investor. |
 
 ### 5.2 Primary Flow — Broker Journey
 
 | Broker Fast-Track Flow | |
 |---|---|
-| **Step 1** | Broker logs into the platform with a verified broker account. |
-| **Step 2** | Broker uploads 10–30 photos of a newly listed property. |
-| **Step 3** | Platform generates the Gaussian Splat 3D scene (1–5 minutes processing). |
-| **Step 4** | Broker adds spatial annotations (view value, finish quality, yield hotspots). |
-| **Step 5** | Broker clicks 'Generate Tour' — system renders a 30-second 1080p MP4 flythrough. |
-| **Step 6** | Broker downloads the video and shares directly to client WhatsApp group. |
-| **Step 7** | Broker shares a viewer link (mobile-optimised) with a personalised ROI summary appended. |
-| **Step 8** | Interested investor clicks the link → sees 3D view + ROI data → contacts broker via embedded CTA. |
+| **Step 1** | Broker signs up or logs in via Supabase Auth (email/password or Google OAuth). Broker Pro account verified. |
+| **Step 2** | Broker creates a new property listing → enters metadata (address, area, price, bedrooms, sqft). |
+| **Step 3** | Broker clicks "Generate Description" → Gemini AI produces a luxury-toned marketing description from the metadata. Broker edits and saves. |
+| **Step 4** | Broker uploads 10–30 photos of the property. |
+| **Step 5** | Platform generates the Gaussian Splat 3D scene (1–5 minutes processing). Real-time status updates via Supabase real-time. |
+| **Step 6** | Broker adds spatial annotations (view value, finish quality, yield hotspots). |
+| **Step 7** | Broker runs the ROI Wizard for the property → generates ROI metrics + AI investment narrative to attach to the listing. |
+| **Step 8** | Broker clicks "Generate Tour" → system renders a 30-second 1080p MP4 flythrough with broker branding overlay. |
+| **Step 9** | Broker downloads the video and shares directly to client WhatsApp group. |
+| **Step 10** | Broker shares a viewer link (mobile-optimised) with ROI summary + AI description + 3D tour. |
+| **Step 11** | Interested investor clicks the link → sees 3D view + ROI data + description → contacts broker via embedded CTA. |
+| **Step 12** | (Optional) Broker uses Developer Intelligence to generate a developer report to share with clients for additional trust-building. |
 
 ### 5.3 Alternative Flow — Market Browser
 
-- User enters via Prop Pulse (Tool 2).
-- User filters by area (e.g. Dubai Marina), property type (apartment), price range (AED 1.5M–3M).
-- User sees a list/map of comparable transactions with average yield and price-per-sqft.
-- User selects a specific property → sees ROI summary generated automatically.
-- User is offered 3D Viewer CTA if a 3D scan exists for that property.
+| Market Browser Flow | |
+|---|---|
+| **Step 1** | User enters via Prop Pulse (Tool 2) — accessible without login (public route). |
+| **Step 2** | User filters by area (e.g. Dubai Marina), property type (apartment), price range (AED 1.5M–3M). |
+| **Step 3** | User sees a list/map of properties with average yield and price-per-sqft data. |
+| **Step 4** | User selects a specific property → sees auto-generated ROI summary. |
+| **Step 5** | User navigates to Developer Intelligence tab → enters the property's developer name → receives AI-generated due diligence report. |
+| **Step 6** | User is offered 3D Viewer CTA if a 3D scan exists for that property. If no scan exists, user sees property images with a note that 3D tours are available for Broker Pro listings. |
+| **Step 7** | User is prompted to sign up to save properties, bookmark reports, and unlock full features. |
 
 ### 5.4 Authentication Flow
 
-- **Guest users:** Can access ROI Wizard and Prop Pulse with limited features (3 calculations, no save).
-- **Free registered users:** Unlimited tool usage, can save up to 3 properties, view shared 3D links.
-- **Paid users / brokers:** Full 3D generation, video export, annotation, unlimited saves, white-label sharing.
+Authentication is handled entirely by **Supabase Auth** on the frontend using `@supabase/ssr`. There are no backend `/api/auth` endpoints — the backend only validates Supabase JWTs via middleware on protected routes.
+
+| Auth Detail | Implementation |
+|---|---|
+| **Sign up / Login** | Frontend calls `supabase.auth.signUp()` or `supabase.auth.signInWithPassword()` via client components. |
+| **OAuth** | Google OAuth supported via `supabase.auth.signInWithOAuth({ provider: 'google' })`. |
+| **Session storage** | HTTP-only cookies managed by `@supabase/ssr` — never `localStorage`. |
+| **Route protection** | Next.js `middleware.ts` checks session before allowing access to `(tools)`, `(dashboard)`, `(viewer)` routes. |
+| **Backend validation** | Express `authMiddleware` extracts Bearer token from `Authorization` header, calls `supabase.auth.getUser(token)` to validate. |
+| **Profile creation** | Auto-created via PostgreSQL trigger (`handle_new_user()`) when a user signs up — no API call needed. |
+| **Token refresh** | Handled automatically by `@supabase/ssr` middleware on every request. |
+
+**Access tiers:**
+
+| Tier | Access |
+|---|---|
+| **Guest (no login)** | Browse landing page, Prop Pulse market data, 3 ROI calculations, 1 Developer Intelligence report (watermarked). |
+| **Free registered** | Unlimited ROI calculations, 5 AI descriptions/month, 3 AI narratives/month, save up to 3 properties, view shared 3D links. |
+| **Investor (paid)** | All Free features + 10 Developer Intelligence reports/month, generate up to 5 personal 3D tours/month, video export. |
+| **Broker Pro (paid)** | All Investor features + unlimited 3D scans, unlimited AI content, white-label video/PDF export, client CRM, priority processing. |
+| **Enterprise** | Custom volume pricing, API access, branded landing pages, dedicated support. |
 
 ---
 

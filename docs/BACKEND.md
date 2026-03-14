@@ -14,13 +14,12 @@ backend/src/
 │   ├── supabase.ts           # Supabase client initialization
 │   └── gemini.ts             # Google Gemini AI client initialization
 ├── middleware/
-│   ├── auth.ts               # JWT validation middleware
+│   ├── auth.ts               # JWT validation middleware (validates Supabase JWT)
 │   ├── validate.ts           # Request validation (Zod schemas)
 │   ├── errorHandler.ts       # Global error handler
 │   ├── rateLimiter.ts        # Rate limiting
 │   └── cors.ts               # CORS configuration
 ├── routes/
-│   ├── auth.routes.ts        # Auth endpoints
 │   ├── property.routes.ts    # Property CRUD
 │   ├── roi.routes.ts         # ROI calculations
 │   ├── market.routes.ts      # Market data / Prop Pulse
@@ -30,7 +29,6 @@ backend/src/
 │   ├── ai.routes.ts          # AI content generation (Gemini)
 │   └── developer.routes.ts   # Developer intelligence (Crustdata + Gemini)
 ├── services/
-│   ├── auth.service.ts       # Auth business logic
 │   ├── property.service.ts   # Property business logic
 │   ├── roi.service.ts        # ROI calculation engine
 │   ├── market.service.ts     # Market data aggregation
@@ -78,14 +76,18 @@ app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 
+// Auth: Handled entirely by Supabase Auth on the frontend.
+// No /api/auth routes needed — the backend only validates JWTs via authMiddleware.
+
 // Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/properties', authMiddleware, propertyRoutes);
 app.use('/api/roi', authMiddleware, roiRoutes);
 app.use('/api/market', marketRoutes);  // Public
 app.use('/api/tours', authMiddleware, tourRoutes);
 app.use('/api/jobs', authMiddleware, jobRoutes);
+app.use('/api/uploads', authMiddleware, uploadRoutes);
 app.use('/api/ai', authMiddleware, aiRoutes);
+app.use('/api/developers', authMiddleware, developerRoutes);
 
 // Error handling (must be last)
 app.use(errorHandler);

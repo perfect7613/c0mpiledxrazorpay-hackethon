@@ -20,8 +20,8 @@ The platform is a three-tier web application with a 3D processing pipeline.
 │                     BACKEND (Node.js + Express)                  │
 │                                                                  │
 │  ┌──────────┐ ┌──────────────┐ ┌────────────┐ ┌──────────────┐  │
-│  │  Auth    │ │  Property    │ │  Market    │ │  3D Jobs     │  │
-│  │  Routes  │ │  Routes      │ │  Routes    │ │  Routes      │  │
+│  │  Auth    │ │  Property    │ │  Market /  │ │  3D Jobs /   │  │
+│  │Middleware│ │  / ROI / AI  │ │  Developer │ │  Upload      │  │
 │  └──────────┘ └──────────────┘ └────────────┘ └──────────────┘  │
 └──────┬──────────────┬──────────────┬──────────────┬─────────────┘
        │              │              │              │
@@ -95,7 +95,7 @@ hackethon/
 
 ## Data Flow
 
-1. **User Auth** → Supabase Auth (JWT) → Session stored in cookies → Validated by backend middleware
+1. **User Auth** → Supabase Auth handles login/signup on the frontend via `@supabase/ssr` → JWT stored in HTTP-only cookies → Backend validates JWT via `authMiddleware` (no `/api/auth` routes needed)
 2. **Property Data** → Backend fetches from Supabase DB → Served via REST API → Consumed by frontend Server Components
 3. **File Uploads** → Frontend uses UploadThing components → Files stored via UploadThing → URLs saved to Supabase DB
 4. **Image CDN** → Property images served via Uploadcare CDN with on-the-fly transformations
