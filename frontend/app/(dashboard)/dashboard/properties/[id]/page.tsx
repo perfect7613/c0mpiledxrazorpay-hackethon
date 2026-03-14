@@ -13,7 +13,6 @@ import {
   Loader2, Eye, EyeOff, Sparkles, AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { UploadDropzone } from "@/lib/uploadthing";
 import type { Property, Tour } from "@/lib/types";
 
@@ -153,13 +152,16 @@ export default function PropertyDetailPage() {
     }
   };
 
-  const handleImagesUploaded = async (newUrls: string[]) => {
+  const handleImagesUploaded = async (uploadThingUrls: string[]) => {
     if (!property) return;
     setUploadError(null);
+    setIsUploadingImages(true);
     try {
       const token = await getToken();
       if (!token) return;
-      const updatedImages = [...(property.images ?? []), ...newUrls];
+
+      // Save UploadThing URLs directly to property
+      const updatedImages = [...(property.images ?? []), ...uploadThingUrls];
       const updated = await apiFetch<Property>(`/api/properties/${id}`, {
         token,
         method: "PATCH",
@@ -168,6 +170,8 @@ export default function PropertyDetailPage() {
       setProperty(updated);
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Failed to save images");
+    } finally {
+      setIsUploadingImages(false);
     }
   };
 
@@ -450,12 +454,11 @@ export default function PropertyDetailPage() {
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {property.images.map((url, idx) => (
                 <div key={idx} className="group relative aspect-4/3 overflow-hidden rounded-xl border border-gold-500/10 bg-navy-800/50">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={url}
                     alt={`Property photo ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
                   <button
                     onClick={() => handleRemoveImage(idx)}
