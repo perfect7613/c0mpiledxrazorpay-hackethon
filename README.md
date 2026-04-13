@@ -1,243 +1,135 @@
 # Dubai Property 3D World
 
-Immersive real estate intelligence for the Dubai market.
+**Built at c0mpiled × Razorpay Hackathon**
+
+An AI-powered real estate decision system for the Dubai market — combining market intelligence, ROI analysis, and photorealistic 3D property exploration into a single investor workflow.
 
 ---
 
-## What this is
+## The Problem We Were Solving
 
-A platform that combines:
+Dubai real estate is a global market where most investors never visit in person.
 
-- market intelligence  
-- investment analysis  
-- photorealistic 3D property exploration  
+Investors rely on static images, fragmented data across portals, and WhatsApp voice notes from brokers.  
+Brokers lack shareable, high-quality assets and struggle to build trust remotely.
 
-into a single workflow.
-
----
-
-## The idea
-
-Real estate decisions today are broken.
-
-Investors:
-- rely on static images  
-- trust fragmented data  
-- rarely visit properties in person  
-
-Brokers:
-- close deals over WhatsApp  
-- lack high-quality, shareable assets  
-- struggle to communicate value remotely  
+The gap: there's no platform that closes the loop between **data → insight → experience → decision**.
 
 ---
 
-## The shift
+## PM Framing: What This Is (and Isn't)
 
-Don’t just show properties.
+This is not a listing platform. Not a 3D tour tool. Not an ROI calculator.
 
-→ help users **understand value**  
-→ help brokers **close faster**  
+It's a **decision system** — built on the premise that the right question in real estate isn't *"show me the property"* but *"help me understand if this makes sense."*
 
----
-
-## The product
-
-A 4-layer system:
-
-1. Landing platform  
-2. ROI analysis (ROI Wizard)  
-3. Market intelligence (Prop Pulse)  
-4. 3D World Viewer (core product)
+That framing drove every product decision made during the build.
 
 ---
 
-## Core flow
+## Product Architecture
 
-Discover → Analyze → Experience → Share
+A 4-layer system, each feeding into the next:
 
-User:
-- finds a property  
-- evaluates ROI  
-- explores it in 3D  
-- shares or decides  
+| Layer | Name | What It Does |
+|---|---|---|
+| 1 | Landing Platform | Property discovery and entry point |
+| 2 | ROI Wizard | Yield, IRR, and cashflow analysis |
+| 3 | Prop Pulse | Area trends, price benchmarks, supply pipeline |
+| 4 | 3D World Viewer | Photorealistic Gaussian Splat exploration with spatial annotations |
 
----
+**Core flow:** Discover → Analyze → Experience → Share
 
-## Why this matters
-
-Dubai real estate is global.
-
-Most buyers:
-- are remote  
-- decide via WhatsApp  
-- rely on visual trust  
-
-There is no platform that combines:
-data + 3D + distribution  
+The deliberate design choice: every tool feeds into the 3D viewer, not away from it. The 3D experience is the convergence point, not a standalone feature.
 
 ---
 
-## What makes this different
+## Where AI Does the Work
 
-Not a listing platform  
-Not a 3D tool  
-Not an ROI calculator  
+AI isn't a layer on top — it's embedded in the decision loop:
 
-It is a **decision system**
+- **ROI Wizard:** AI surfaces investment viability signals (yield, IRR, cashflow) from raw listing data, reducing manual calculation to near-zero
+- **Spatial Annotations:** AI tags 3D environments with contextual markers — ROI projections, finish quality, view premiums — directly in the space
+- **WhatsApp-ready tours:** AI generates 30-second cinematic clips from the 3D model, optimized for broker-to-investor sharing on mobile
 
----
-
-## Key components
-
-### ROI Wizard
-
-Understand investment viability:
-- yield  
-- IRR  
-- cashflow  
+**The AI bet:** In remote transactions, trust is visual. The highest-leverage use of AI here is not search or recommendations — it's generating *shareable conviction*.
 
 ---
 
-### Prop Pulse
+## Key Product Decisions Made
 
-Understand the market:
-- area trends  
-- price benchmarks  
-- supply pipeline  
+**1. Shareability as a core primitive, not an afterthought**  
+Every output — ROI report, market snapshot, 3D tour — was designed to be one-tap shareable via WhatsApp. This was a deliberate constraint that shaped the entire UX. Brokers don't use portals; they use messaging. We built for that reality.
 
----
+**2. Workflow over features**  
+Early temptation was to build each tool standalone. The PM decision was to force a connected flow — you can't skip straight to 3D without seeing the data. This raised friction slightly but dramatically improved decision quality per session.
 
-### 3D World Viewer (core)
-
-Experience the property:
-- photorealistic 3D (Gaussian Splat)  
-- spatial annotations (ROI, finishes, views)  
-- cinematic tours for WhatsApp  
+**3. Speed over perfection on the AI outputs**  
+The 3D generation from imperfect photos was the hardest technical constraint. Rather than block on perfect quality, we optimized for "good enough to trust" — conviction in minutes, not days. A deliberate tradeoff to ship within hackathon constraints.
 
 ---
 
-## The unlock
+## AI-Specific Challenges
 
-Most platforms stop at:
+The problems that don't show up in a product brief:
 
-→ “Here is the property”
-
-This system enables:
-
-→ “Here is why this property makes sense”
+- **Input quality vs. output trust:** Gaussian Splat quality degrades with sparse or low-quality photo sets. Users can't trust a tour that looks wrong. Defining the minimum viable photo set for acceptable output was a real design problem.
+- **Annotation accuracy:** Spatial ROI annotations are only as good as the underlying data. If Prop Pulse data is stale, the annotation misleads. Surfacing data freshness signals in-product was a late but critical addition.
+- **Broker adoption friction:** Generating the cinematic clip works — getting brokers to change the habit of manual WhatsApp pitches doesn't happen automatically. Distribution design is as hard as the feature itself.
 
 ---
 
-## Signature feature
+## What Success Looks Like
 
-**WhatsApp-ready cinematic tours**
+Not vanity metrics. Decision quality metrics:
 
-Brokers can:
-- generate a 30-second video  
-- share instantly  
-- close deals remotely  
-
----
-
-## Product decisions
-
-Workflow over features  
-→ tools feed into the 3D experience  
-
-Speed over perfection  
-→ conviction in minutes, not days  
-
-Shareability as a core primitive  
-→ every output is designed to be shared  
+- **Tool → 3D conversion rate** — are users reaching the core product?
+- **Video shares per session** — is the distribution primitive actually being used?
+- **Session depth** — are users exploring beyond the first property?
 
 ---
 
-## System thinking
+## Business Model
 
-This is not a feature stack.
-
-It is a **connected system**:
-
-data → insight → experience → distribution  
+- SaaS subscription for brokers (access to Prop Pulse + ROI Wizard)
+- Per-property 3D scan fees (supply-side monetization)
+- Enterprise / white-label for developers and agencies
 
 ---
 
-## Business model
+## Roadmap Thinking (Post-Hackathon)
 
-- SaaS for brokers  
-- per-property 3D scan fees  
-- enterprise / white-label  
+If this were to move beyond hackathon scope, the next bets:
 
----
-
-## What success looks like
-
-- faster investor decisions  
-- higher broker conversion rates  
-- increased trust in remote transactions  
-
-Measured by:
-- tool → 3D conversion  
-- video shares  
-- session depth  
-
----
-
-## What’s hard
-
-- generating high-quality 3D from imperfect photos  
-- ensuring data accuracy  
-- maintaining performance at scale  
-- driving adoption across brokers  
-
----
-
-## Insight
-
-AI in real estate is not about:
-
-→ better listings  
-
-It’s about:
-
-→ better decisions  
-
----
-
-## Roadmap direction
-
-- AI-generated staging  
-- automated annotations  
-- portfolio-level analytics  
-- developer/off-plan support  
+1. **AI-generated staging** — let investors visualize furnished vs. empty scenarios
+2. **Automated annotations at scale** — move from manual tagging to model-driven spatial markup
+3. **Portfolio-level analytics** — an investor with 3 properties needs a different view than a first-time buyer
+4. **Off-plan / developer support** — the largest inventory segment in Dubai, currently underserved by 3D
 
 ---
 
 ## Positioning
 
-This is not:
+| Platform | What It Does |
+|---|---|
+| Matterport | 3D tours (no data, no AI layer) |
+| Property Finder | Listings (no 3D, no decision support) |
+| Luma AI | 3D generation (no real estate context) |
 
-- Matterport  
-- Property Finder  
-- Luma AI  
-
-It sits across all three.
+**This product sits at the intersection of all three** — and is the only one where the output is a *decision*, not just a *view*.
 
 ---
 
-## Why now
+## Why Now
 
-- Dubai market at record scale  
-- remote investing is default  
-- 3D + AI infra is finally viable  
+- Dubai real estate market at record transaction volume
+- Remote investing is now the default, not the exception
+- 3D + AI infrastructure is finally viable at hackathon-level cost and speed
 
 ---
 
 ## About
 
-Built as a system to explore how:
+Built to explore how AI, spatial computing, and product design can reshape the real estate decision loop — from fragmented data and static images to a shareable, AI-augmented experience that closes deals remotely.
 
-AI + spatial computing + product design  
-
-can reshape how real estate decisions are made.
+This was a hackathon build. The thinking behind it is production-grade.
